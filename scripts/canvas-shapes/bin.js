@@ -1,78 +1,78 @@
 'use strict';
 
 var ellipse = require('./ellipse.js'),
-    angles = require('../angles.js');
+  angles = require('../angles.js');
 
 var sqr = function(x) {
-    return x * x;
+  return x * x;
 }
 
 module.exports = function(ctx, x, y, dx, dy, sectors, rotation) {
 
 
-    var xm = x + dx / 2,
-        ym1 = y + dy / 8,
-        ym2 = y + dy * (1 / 8 + 1 / 12),
-        ym3 = y + dy * 7 / 8,
-        topradiusX = dx / 2,
-        botradiusX = topradiusX * 0.87,
-        radiusY = dy / 8;
+  var xm = x + dx / 2,
+    ym1 = y + dy / 8,
+    ym2 = y + dy * (1 / 8 + 1 / 12),
+    ym3 = y + dy * 7 / 8,
+    topradiusX = dx / 2,
+    botradiusX = topradiusX * 0.87,
+    radiusY = dy / 8;
 
-    ctx.save();
+  ctx.save();
 
-    ellipse(ctx, xm, ym1, topradiusX, radiusY, 0, 0, Math.PI * 2, false);
-
-
-
-    ellipse(ctx, xm, ym2, topradiusX, radiusY, 0, 0, Math.PI, false);
-    ellipse(ctx, xm, ym3, botradiusX, radiusY, 0, 0, Math.PI, false);
-
-    ctx.beginPath();
-    ctx.moveTo(x, ym1);
-    ctx.lineTo(x, ym2);
-
-    ctx.moveTo(x + dx, ym1);
-    ctx.lineTo(x + dx, ym2);
-
-    ctx.moveTo(
-        x + topradiusX - botradiusX,
-        ym2 + Math.sqrt(sqr(radiusY) * (1 - sqr(botradiusX / topradiusX)))
-    );
-    ctx.lineTo(
-        x + topradiusX - botradiusX,
-        ym3
-    );
-
-    ctx.moveTo(
-        x + topradiusX + botradiusX,
-        ym2 + Math.sqrt(sqr(radiusY) * (1 - sqr(botradiusX / topradiusX)))
-    );
-    ctx.lineTo(
-        x + topradiusX + botradiusX,
-        ym3
-    );
+  ellipse(ctx, xm, ym1, topradiusX, radiusY, 0, 0, Math.PI * 2, false);
 
 
-    rotation = rotation || 0;
-    sectors = sectors || 0;
 
-    var sectorAngle = Math.PI * 2 / sectors;
+  ellipse(ctx, xm, ym2, topradiusX, radiusY, 0, 0, Math.PI, false);
+  ellipse(ctx, xm, ym3, botradiusX, radiusY, 0, 0, Math.PI, false);
 
-    for (var i = 0; i < sectors; ++i) {
+  ctx.beginPath();
+  ctx.moveTo(x, ym1);
+  ctx.lineTo(x, ym2);
 
-        var angle = sectorAngle * i - rotation;
+  ctx.moveTo(x + dx, ym1);
+  ctx.lineTo(x + dx, ym2);
 
-        if (angles.clockwisebetween(angle, -Math.PI * 0.475, Math.PI * 0.475)) {
+  ctx.moveTo(
+    x + topradiusX - botradiusX,
+    ym2 + Math.sqrt(sqr(radiusY) * (1 - sqr(botradiusX / topradiusX)))
+  );
+  ctx.lineTo(
+    x + topradiusX - botradiusX,
+    ym3
+  );
 
-            var offsetx = botradiusX * Math.sin(angle),
-                topy = Math.sqrt(sqr(radiusY) * (1 - sqr(offsetx / topradiusX))),
-                boty = Math.sqrt(sqr(radiusY) * (1 - sqr(offsetx / botradiusX)));
+  ctx.moveTo(
+    x + topradiusX + botradiusX,
+    ym2 + Math.sqrt(sqr(radiusY) * (1 - sqr(botradiusX / topradiusX)))
+  );
+  ctx.lineTo(
+    x + topradiusX + botradiusX,
+    ym3
+  );
 
-            ctx.moveTo(x + topradiusX + offsetx, ym2 + topy + 1);
-            ctx.lineTo(x + topradiusX + offsetx, ym3 - dy * 0.1 + boty);
-        }
+
+  rotation = rotation || 0;
+  sectors = sectors || 0;
+
+  var sectorAngle = Math.PI * 2 / sectors;
+
+  for (var i = 0; i < sectors; ++i) {
+
+    var angle = sectorAngle * i - rotation;
+
+    if (angles.clockwisebetween(angle, -Math.PI * 0.475, Math.PI * 0.475)) {
+
+      var offsetx = botradiusX * Math.sin(angle),
+        topy = Math.sqrt(sqr(radiusY) * (1 - sqr(offsetx / topradiusX))),
+        boty = Math.sqrt(sqr(radiusY) * (1 - sqr(offsetx / botradiusX)));
+
+      ctx.moveTo(x + topradiusX + offsetx, ym2 + topy + 1);
+      ctx.lineTo(x + topradiusX + offsetx, ym3 - dy * 0.1 + boty);
     }
+  }
 
-    ctx.stroke();
-    ctx.restore();
+  ctx.stroke();
+  ctx.restore();
 }
