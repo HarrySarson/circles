@@ -1,53 +1,45 @@
-'use strict';
-var $ = require('jquery'),
-    _ = require('lodash'),
-    animate = require('animate'),
-    inherit = require('class'),
-    restrict = require('./angles.js').restrict;
+import $ from 'jquery';
+import _ from 'lodash';
+import animate from 'animate';
+import inherit from 'class';
+import {restrict} from './angles.js';
+import drawBin from './canvas-shapes/bin.js';
+import smoother from './smoother.js';
+
+import ArrowItem from './items/arrow.js';
+import PointsItem from './items/points.js';
+import CirclesItem from './items/circles.js';
+import BinItem from './items/bin.js';
+import SelectManager from './manager/select.js';
+import CanvasManager from './manager/canvas.js';
+import CssManager from './manager/css.js';
 
 
-var drawBin = require('./canvas-shapes/bin.js');
-
-
-var smoother = require('./smoother.js');
-
-var ItemCtor = {
-    Arrow: require('./items/arrow.js'),
-    Points: require('./items/points.js'),
-    Circles: require('./items/circles.js'),
-    Bin: require('./items/bin.js')
-};
-var Manager = {
-    Select: require('./manager/select.js'),
-    Canvas: require('./manager/canvas.js'),
-    CSS: require('./manager/css.js')
-};
-
-var cosh = Math.cosh || function(x) {
+const cosh = Math.cosh || function(x) {
     return 0.5 * (Math.exp(x) + Math.exp(-x));
-}
+};
 
-var almostzero = function(x, elipson) {
+const almostzero = function(x, elipson) {
     elipson = elipson === undefined ? 1e-5 : elipson;
 
     return Math.abs(x) < elipson;
 };
 
 
-var $main = $('.main');
-var cursor = new Manager.CSS($('html'), 'cursor', 'pointer');
+const $main = $('.main');
+const cursor = new CssManager($('html'), 'cursor', 'pointer');
 
-var cnvs = new Manager.Canvas($main);
+const cnvs = new CanvasManager($main);
 
 
-var arc = function(layer) {
+const arc = function(layer) {
     layer.context().arc(layer.width() / 2, layer.height() / 2, 100, 0, 2 * Math.PI);
     layer.context().strokeStyle = 'white';
     layer.context().lineWidth = 10;
     layer.context().stroke();
 };
 
-var box = function(layer) {
+const box = function(layer) {
     layer.context().rect(0, 0, layer.width(), layer.height());
     layer.context().strokeStyle = 'red';
     layer.context().lineWidth = 50;
@@ -56,38 +48,38 @@ var box = function(layer) {
 
 // returns random number x, lower <= x < upper
 function randomBetween(lower, upper, generator /* = Math.random */ ) {
-    var rand = _.isFunction(generator) ?
+    const rand = _.isFunction(generator) ?
         restrict(generator(), 0, 1) : Math.random(),
         range = upper - lower;
 
     return lower + range * rand;
 }
 
-var force_replot;
+let force_replot;
 
 cnvs.resizeCanvas();
 
 animate(function(controller) {
     //controller.minRefresh(500);
 
-    var $resize = $('.resize');
-    var offset = $resize.offset();
+    const $resize = $('.resize');
+    const offset = $resize.offset();
 
     // use outerwidth to include border as in css, box-sizing: border-box;
-    var initial = {
+    const initial = {
         x: 0,
         y: 0,
         width: $main.outerWidth(),
         height: $main.outerHeight()
     };
-    var current = _.clone(initial);
-    var adjusted;
+    const current = _.clone(initial);
+    let adjusted;
 
-    var n = 0;
+    const n = 0;
 
     // critically damped
-    var b = 0.1;
-    var adjust = {};
+    const b = 0.1;
+    const adjust = {};
     adjust.x = smoother({
         a: 1,
         b: b,
@@ -99,15 +91,15 @@ animate(function(controller) {
         c: b * b / 4
     });
 
-    var stoptime;
+    let stoptime;
 
 
     controller.on('animate', function(data) {
 
-        var newW = adjust.x(current.width, initial.width + current.x - initial.x, data.deltatime),
+        const newW = adjust.x(current.width, initial.width + current.x - initial.x, data.deltatime),
             newH = adjust.y(current.height, initial.height + current.y - initial.y, data.deltatime);
 
-        var elipson = 1e-3;
+        const elipson = 1e-3;
 
         if (Math.abs(newW - current.width) < elipson || Math.abs(newH - current.height) < elipson) {
             stoptime = stoptime || data.time;
@@ -139,7 +131,7 @@ animate(function(controller) {
         force_replot();
     });
 
-    var updateMouse = function(e) {
+    const updateMouse = function(e) {
         current.x = e.pageX;
         current.y = e.pageY;
         controller.start();
@@ -162,35 +154,35 @@ animate(function(controller) {
 });
 
 animate(function(controller) {
-    var ui = cnvs.getlayer(1);
+    const ui = cnvs.getlayer(1);
 
-    var generate = function(len, cb) {
-        var arr = [];
+    const generate = function(len, cb) {
+        const arr = [];
         if (!_.isFunction(cb)) {
             cb = function() {
                 return cb;
             };
         }
-        for (var i = 0; i < len; ++i) {
+        for (let i = 0; i < len; ++i) {
             arr.push(cb(i, arr));
         }
         return arr;
     };
 
-    var colors = function() {
-        var typemap = ['pri', 'sec2', 'compl']; // NB sec1 is not in typemap: sec1 reserved for arrow etc not for circles
-        var startpos = 2;
-        var posmap = _.shuffle(generate(this.pri.length - 2, function(i) {
+    const colors = function() {
+        const typemap = ['pri', 'sec2', 'compl']; // NB sec1 is not in typemap: sec1 reserved for arrow etc not for circles
+        const startpos = 2;
+        const posmap = _.shuffle(generate(this.pri.length - 2, function(i) {
             return i;
         }));
-        var itercount = 0;
+        let itercount = 0;
         this.cnvs = function(i) {
-            var type = typemap[i % typemap.length];
+            const type = typemap[i % typemap.length];
             // type is either sec1, sec2 or compl
 
             // order is 2,0,3,4,3,0,2,1,2,0
 
-            var clipped = (i + startpos) % posmap.length;
+            const clipped = (i + startpos) % posmap.length;
 
             return this[type][posmap[clipped]];
         };
@@ -205,13 +197,13 @@ animate(function(controller) {
         "compl": ["#96CC60", "#DCFDBA", "#BEEF8B", "#5A832F", "#1F2F0E"],
     });
 
-    var selected = new Manager.Select()
+    const selected = new SelectManager()
         .type_set(cursor.on.bind(cursor, 'uiSelect'))
         .type_unset(cursor.off.bind(cursor, 'uiSelect'));
 
-    var mouse = {};
+    let mouse = {};
 
-    var newpointadded = false,
+    let newpointadded = false,
         firstplot = true;
 
     force_replot = function() {
@@ -219,8 +211,8 @@ animate(function(controller) {
     }
 
 
-    var items = {
-        bin: new ItemCtor.Bin(selected, {
+    const items = {
+        bin: new BinItem(selected, {
             x: 30,
             y: -60
         }, 35, 60, {
@@ -230,20 +222,20 @@ animate(function(controller) {
     };
 
 
-    items.points = new ItemCtor.Points(selected, items.bin, function(x) {
+    items.points = new PointsItem(selected, items.bin, function(x) {
             return 1 / (cosh(0.01 * x * x));
         }),
 
         items.points.add(randomBetween(50, 150), randomBetween(200, 250))
         .add(randomBetween(290, 310), randomBetween(290, 310));
 
-    items.arrow = new ItemCtor.Arrow(items.points.coor(0), randomBetween(-Math.PI * 0.6, -Math.PI * 0.4), selected);
-    items.circles = new ItemCtor.Circles(items.points, items.arrow, selected);
+    items.arrow = new ArrowItem(items.points.coor(0), randomBetween(-Math.PI * 0.6, -Math.PI * 0.4), selected);
+    items.circles = new CirclesItem(items.points, items.arrow, selected);
 
 
     controller.on('animate', function(data) {
         // cursor
-        var toSelect = null,
+        let toSelect = null,
             any_item_changed = firstplot;
 
         firstplot = false;
@@ -251,7 +243,7 @@ animate(function(controller) {
         // for all items, test the clickboxes
         _.forOwn(items, function(item) {
             if (item.clickbox && _.isFunction(item.clickbox)) {
-                var mouseover = item.clickbox(mouse.x, mouse.y);
+                const mouseover = item.clickbox(mouse.x, mouse.y);
                 if (mouseover && // if mouse is over clickbox
                     (!toSelect || // and either mouse is not over any previously tested clickboxes    
                         mouseover.d < toSelect.d)) { // or mouse is closer to this item than it is to the other item
@@ -274,13 +266,13 @@ animate(function(controller) {
 
             // if left mouse button pressed then add point, but only once
             if (selected.is_unselected() && selected.mousedown() && !newpointadded) {
-                var id = items.points.length;
+                const id = items.points.length;
 
                 // add point
                 items.points.add(mouse.x, mouse.y);
 
                 // force newly added point to be selected
-                selected.override_type(ItemCtor.Points.itemType, id);
+                selected.override_type(PointsItem.itemType, id);
 
                 newpointadded = true;
             }
@@ -316,10 +308,10 @@ animate(function(controller) {
 
     }).start();
 
-    var offset = ui.canvas.offset();
+    const offset = ui.canvas.offset();
 
-    var getcoor = function(e) {
-        var coor = {
+    const getcoor = function(e) {
+        const coor = {
             x: e.pageX - offset.left,
             y: e.pageY - offset.top
         };
