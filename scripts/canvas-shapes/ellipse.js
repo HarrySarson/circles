@@ -1,4 +1,3 @@
-
 /*
     The CanvasRenderingContext2D.ellipse() method of the Canvas 2D API adds an ellipse to the path which is centered at (x, y) position with the radii radiusX and radiusY starting at startAngle and ending at endAngle going in the given direction by anticlockwise (defaulting to clockwise).
 
@@ -24,23 +23,23 @@
 */
 
 
-module.exports = function (ctx, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise){
+module.exports = function(ctx, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
     ctx.save();
     ctx.beginPath();
-    
-    if(ctx.ellipse)
+
+    if (ctx.ellipse)
         ctx.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
-    else{
-        var kappa   = 0.5522848,
-            ox      = radiusX * kappa,  // control point offset horizontal
-            oy      = radiusY * kappa,  // control point offset vertical
-            xb      = x - radiusX,      // x-begin
-            yb      = y - radiusY,      // y-begin
-            xe      = x + radiusX,      // x-end
-            ye      = y + radiusY,      // y-end
-            sin     = Math.sin(rotation),
-            cos     = Math.cos(rotation);
-                
+    else {
+        var kappa = 0.5522848,
+            ox = radiusX * kappa, // control point offset horizontal
+            oy = radiusY * kappa, // control point offset vertical
+            xb = x - radiusX, // x-begin
+            yb = y - radiusY, // y-begin
+            xe = x + radiusX, // x-end
+            ye = y + radiusY, // y-end
+            sin = Math.sin(rotation),
+            cos = Math.cos(rotation);
+
         /*
         
             [ cos, -sin, x + y*sin + x*cos ]    
@@ -48,49 +47,49 @@ module.exports = function (ctx, x, y, radiusX, radiusY, rotation, startAngle, en
             [ 0     0    1                 ]
             
             */
-              
-        ctx.setTransform    (
-            cos, sin, -sin, cos, 
-            
-            x + y*sin - x*cos, y - x*sin - y*cos
+
+        ctx.setTransform(
+            cos, sin, -sin, cos,
+
+            x + y * sin - x * cos, y - x * sin - y * cos
         );
-        
+
         // create clipping region using circle with radius = major axis
-        ctx.moveTo(x,y);
-        ctx.arc(x, y, Math.max(radiusX, radiusY)*1.1, startAngle, endAngle, anticlockwise);
-        
+        ctx.moveTo(x, y);
+        ctx.arc(x, y, Math.max(radiusX, radiusY) * 1.1, startAngle, endAngle, anticlockwise);
+
         ctx.clip();
-        
-        
+
+
         // draw ellipse
-        
+
         ctx.beginPath();
-        ctx.moveTo(xb, y); 
-      
+        ctx.moveTo(xb, y);
+
         ctx.bezierCurveTo(
-            xb,     y - oy, 
-            x - ox, yb, 
-            x,      yb); 
+            xb, y - oy,
+            x - ox, yb,
+            x, yb);
 
         ctx.bezierCurveTo(
             x + ox, yb,
-            xe,     y - oy,
-            xe,     y);
-        
-        
+            xe, y - oy,
+            xe, y);
+
+
         ctx.bezierCurveTo(
-            xe,     y + oy, 
-            x + ox, ye, 
-            x,      ye);
-            
+            xe, y + oy,
+            x + ox, ye,
+            x, ye);
+
         ctx.bezierCurveTo(
-            x - ox, ye, 
-            xb,     y + oy, 
-            xb,     y);
-            
+            x - ox, ye,
+            xb, y + oy,
+            xb, y);
+
     }
     ctx.stroke();
     ctx.fill();
-    
+
     ctx.restore();
 }
