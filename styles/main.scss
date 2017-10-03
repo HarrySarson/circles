@@ -1,0 +1,80 @@
+﻿@import 'menu';
+
+@import 'functions/arrow-background';
+@import 'themes/color';
+
+$dark-grey: #444;
+$main-w: 800px;
+$main-h: 600px;
+$main-radius: $main-w/50;
+$border-width: 10px;
+
+body, html{
+    box-sizing: border-box;
+}
+*,*:before,*:after{
+    box-sizing: inherit;
+}
+
+.main{
+    width: $main-w;
+    height: $main-h;
+    position: relative;
+    
+    border: $border-width solid $color-primary-0;
+    border-radius: $main-radius;
+    
+    transform-origin: top left;
+    
+    overflow: hidden;
+    
+    background: $color-primary-4;
+            
+    canvas{
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    
+    float: left;
+}
+
+
+.notice{
+    position: absolute;
+    top: 0;
+    left: 0;
+    font: 16px "Comic Sans MS", "Comic Sans", cursive;
+    &.angle{
+        color: $color-secondary-1-2;
+        &:after{
+            content: '\00b0';
+        }
+    }
+}
+
+.resize{
+    $w: $main-w/11;
+    box-sizing: padding-box;
+    position: absolute;
+    width: $w;
+    height: $w;
+    right: $w*0.1;
+    bottom: $w*0.1;
+    border: $w/3 solid transparent, $w/3 solid transparent;
+    background-clip: padding-box;
+    background-origin: padding-box;
+    background-image: arrow-background2($color-primary-2);
+    border-radius: $main-radius/5;
+    cursor: pointer;
+
+
+    &:hover, &.moving{
+        background-image: arrow-background2($color-primary-1);
+    }
+}
+.info{
+    white-space: pre; 
+    float: right;
+    width: 200px;
+}

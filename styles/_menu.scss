@@ -1,0 +1,61 @@
+
+@import 'themes/color';
+
+$color: (
+    text: $color-primary-1
+);
+
+%hide-text {
+    text-indent: 100%;
+}
+%normal-text{
+    text-indent: 0;
+}
+
+.menu{
+    position: absolute;
+    width: 100%;
+    
+    
+    font: larger Verdana, Geneva, sans-serif;
+    line-height: 2em;
+    
+    &-row{
+    
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+    }
+    &-cell{
+        display: table-cell;
+        position: relative;
+        width: 100%;
+        height: 2em;
+        
+        border: 1px solid green;
+        
+        color: map-get($color,text);
+        text-align: center; 
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    &-onoff{
+        &:hover{
+            %label{
+                position: absolute;
+                @extend %normal-text;
+            }
+            &:before{
+                @extend %label;
+                left: 0;
+                content: "ON";
+            }
+            &:after{
+                @extend %label;
+                right: 0;
+                content: "OFF";
+            }
+            @extend %hide-text;
+        }
+    }
+}
