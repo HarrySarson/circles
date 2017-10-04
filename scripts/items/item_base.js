@@ -1,14 +1,18 @@
-module.exports = exports = function(selected) {
-  this._selected = selected;
+
+export default class ItemBase {
+
+  constructor (selected) {
+    this._selected = selected;
+  }
+
+  get name()  { "item_base" };
+
 }
 
-exports.prototype.name = "item_base";
-
-
-var sqr = function(x) {
+const sqr = function(x) {
   return x * x;
 };
 
-exports.hypot = Math.hypot || function(dx, dy) {
+ItemBase.hypot = Math.hypot || function(dx, dy) {
   return Math.sqrt(sqr(dx) + sqr(dy));
 };
