@@ -84,7 +84,7 @@ class Points extends PointsBase {
         return snapfunction || 1e5;
       };
 
-    this._adjust = smoother.underdamped(2e-2, 8e-3);
+    this._adjust = underdamped(2e-2, 8e-3);
 
     this._rotation = {
       selected: false,
