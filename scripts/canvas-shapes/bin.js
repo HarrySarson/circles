@@ -1,22 +1,22 @@
-'use strict';
 
-var ellipse = require('./ellipse.js'),
-  angles = require('../angles.js');
+import ellipse from './ellipse.js';
+import angles from '../angles.js';
 
-var sqr = function(x) {
+const sqr = function(x) {
   return x * x;
-}
+};
 
-module.exports = function(ctx, x, y, dx, dy, sectors, rotation) {
+export default function(ctx, x, y, dx, dy, sectors, rotation) {
 
 
-  var xm = x + dx / 2,
-    ym1 = y + dy / 8,
-    ym2 = y + dy * (1 / 8 + 1 / 12),
-    ym3 = y + dy * 7 / 8,
-    topradiusX = dx / 2,
-    botradiusX = topradiusX * 0.87,
-    radiusY = dy / 8;
+  const xm = x + dx / 2
+  ,     ym1 = y + dy / 8
+  ,     ym2 = y + dy * (1 / 8 + 1 / 12)
+  ,     ym3 = y + dy * 7 / 8
+  ,     topradiusX = dx / 2
+  ,     botradiusX = topradiusX * 0.87
+  ,     radiusY = dy / 8
+  ;
 
   ctx.save();
 
@@ -56,17 +56,18 @@ module.exports = function(ctx, x, y, dx, dy, sectors, rotation) {
   rotation = rotation || 0;
   sectors = sectors || 0;
 
-  var sectorAngle = Math.PI * 2 / sectors;
+  const sectorAngle = Math.PI * 2 / sectors;
 
-  for (var i = 0; i < sectors; ++i) {
+  for (let i = 0; i < sectors; ++i) {
 
-    var angle = sectorAngle * i - rotation;
+    const angle = sectorAngle * i - rotation;
 
     if (angles.clockwisebetween(angle, -Math.PI * 0.475, Math.PI * 0.475)) {
 
-      var offsetx = botradiusX * Math.sin(angle),
-        topy = Math.sqrt(sqr(radiusY) * (1 - sqr(offsetx / topradiusX))),
-        boty = Math.sqrt(sqr(radiusY) * (1 - sqr(offsetx / botradiusX)));
+      const offsetx = botradiusX * Math.sin(angle)
+      ,     topy = Math.sqrt(sqr(radiusY) * (1 - sqr(offsetx / topradiusX)))
+      ,     boty = Math.sqrt(sqr(radiusY) * (1 - sqr(offsetx / botradiusX)))
+      ;
 
       ctx.moveTo(x + topradiusX + offsetx, ym2 + topy + 1);
       ctx.lineTo(x + topradiusX + offsetx, ym3 - dy * 0.1 + boty);
@@ -75,4 +76,4 @@ module.exports = function(ctx, x, y, dx, dy, sectors, rotation) {
 
   ctx.stroke();
   ctx.restore();
-}
+};

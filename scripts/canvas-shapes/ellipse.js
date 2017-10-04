@@ -22,23 +22,31 @@
         An optional Boolean which, if true, draws the ellipse anticlockwise (counter-clockwise), otherwise in a clockwise direction. 
 */
 
+// TODO check browser requirements, might not need monkey patch.
 
-module.exports = function(ctx, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
+export default function(ctx, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
   ctx.save();
   ctx.beginPath();
 
   if (ctx.ellipse)
     ctx.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
   else {
-    var kappa = 0.5522848,
-      ox = radiusX * kappa, // control point offset horizontal
-      oy = radiusY * kappa, // control point offset vertical
-      xb = x - radiusX, // x-begin
-      yb = y - radiusY, // y-begin
-      xe = x + radiusX, // x-end
-      ye = y + radiusY, // y-end
-      sin = Math.sin(rotation),
-      cos = Math.cos(rotation);
+    const kappa = 0.5522848
+          // control point offset horizontal
+    ,     ox = radiusX * kappa
+          // control point offset vertical
+    ,     oy = radiusY * kappa
+          // x-begin
+    ,     xb = x - radiusX
+          // y-begin
+    ,     yb = y - radiusY
+          // x-end
+    ,     xe = x + radiusX
+          // y-end
+    ,     ye = y + radiusY
+    ,     sin = Math.sin(rotation)
+    ,     cos = Math.cos(rotation)
+    ;
 
     /*
         
@@ -92,4 +100,4 @@ module.exports = function(ctx, x, y, radiusX, radiusY, rotation, startAngle, end
   ctx.fill();
 
   ctx.restore();
-}
+};
