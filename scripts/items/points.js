@@ -1,9 +1,9 @@
-
 import tinycolor from 'tinycolor2';
-import smoother from '../smoother.js';
+import smoother, {underdamped} from '../smoother.js';
 import Item from './item_base.js';
 
-const radius = 10, pointType = 'point';
+const radius = 10
+,     pointType = 'point';
 
 export default Points;
 
@@ -111,7 +111,9 @@ class Points extends PointsBase {
         }
 
 
-        const runtime = time - this.timestamp, k = this.killtime / 1e5;
+        const runtime = time - this.timestamp
+        ,     k = this.killtime / 1e5
+        ;
 
 
         if ((this.selected || runtime < this.killtime) &&
@@ -167,7 +169,10 @@ class Points extends PointsBase {
   }
 
   draw(ui, colors) {
-    const self = this, anyPointSelected = self._selected.is_type(pointType), selectedId = self._selected.id;
+    const self = this
+    ,     anyPointSelected = self._selected.is_type(pointType)
+    ,     selectedId = self._selected.id
+    ;
 
     ui.context.save();
 
@@ -176,7 +181,10 @@ class Points extends PointsBase {
 
     // crosses
     const drawCross = function(coor, color) {
-      const angle = coor.angle, cos = radius * Math.cos(angle), sin = radius * Math.sin(angle);
+      const angle = coor.angle
+      ,     cos = radius * Math.cos(angle)
+      ,     sin = radius * Math.sin(angle)
+      ;
 
       ui.context.beginPath();
 
@@ -331,7 +339,10 @@ class Points extends PointsBase {
     }
 
     for (let i = 0, len = this.length; i < len; ++i) {
-      const coor = this.coor(i), x = this._adjust.get('x' + i)(coor.x, coor.ox, data.deltatime), y = this._adjust.get('y' + i)(coor.y, coor.oy, data.deltatime);
+      const coor = this.coor(i)
+      ,     x = this._adjust.get('x' + i)(coor.x, coor.ox, data.deltatime)
+      ,     y = this._adjust.get('y' + i)(coor.y, coor.oy, data.deltatime)
+      ;
 
       if ((coor.x - x) * (coor.x - x) + (coor.y - y) * (coor.y - y) > 1e-4) {
         // smoother
@@ -373,7 +384,9 @@ const transform = function(func, thispoint, ignore) {
 
   for (let i = 0; i < this.length; ++i) {
     if (ignore !== i || ignore === undefined) {
-      const xsnap = func(newpoint.x - this.coor(i).x), ysnap = func(newpoint.y - this.coor(i).y);
+      const xsnap = func(newpoint.x - this.coor(i).x)
+      ,     ysnap = func(newpoint.y - this.coor(i).y)
+      ;
 
       newpoint.x = this.coor(i).x * xsnap + newpoint.x * (1 - xsnap);
 

@@ -1,5 +1,5 @@
 import tinycolor from 'tinycolor2';
-import smoother from '../smoother.js';
+import smoother, {underdamped} from '../smoother.js';
 import Item from './item_base.js';
 import CSS_Manager from '../manager/css.js';
 import $ from 'jquery';
@@ -17,7 +17,7 @@ class Arrow extends Item {
     Arrow.superclass.call(this, selected);
 
     this.theta = theta;
-    this._adjust = smoother.underdamped(4.5e-3, 2e-2);
+    this._adjust = underdamped(4.5e-3, 2e-2);
 
     const mouse = {
       x: Math.cos(this.theta),

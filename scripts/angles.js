@@ -24,9 +24,9 @@ export function restrict(value, min, max) {
 }
 
 export function clockwisebetween(angle, start, end) {
-  angle = exports.restrict(angle, 0, 2 * Math.PI);
-  start = exports.restrict(start, 0, 2 * Math.PI);
-  end = exports.restrict(end, 0, 2 * Math.PI);
+  angle = restrict(angle, 0, 2 * Math.PI);
+  start = restrict(start, 0, 2 * Math.PI);
+  end = restrict(end, 0, 2 * Math.PI);
 
   const r = (start < end) ?
     (start < angle && angle < end) :

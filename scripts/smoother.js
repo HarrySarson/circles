@@ -1,6 +1,6 @@
 import diff from './differential2ndOrder.js';
 
-export default exports = function(smoother) {
+export default function(smoother) {
   const f = function(oldValue, newValue, deltaT) {
     const dist = newValue - oldValue;
 
