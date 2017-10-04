@@ -2,9 +2,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import animate from 'animate';
 import inherit from 'class';
-import {
-  restrict
-} from './angles.js';
+import {restrict} from './angles.js';
 import drawBin from './canvas-shapes/bin.js';
 import smoother from './smoother.js';
 
